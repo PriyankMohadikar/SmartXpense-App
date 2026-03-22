@@ -58,7 +58,9 @@ router.post('/register', upload.single('avatar'), async (req, res) => {
     const React = require('react');
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // upgrades to STARTTLS automatically
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_APP_PASSWORD,

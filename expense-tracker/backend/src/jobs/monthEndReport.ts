@@ -7,12 +7,14 @@ import { MonthlyReportEmail } from '../emails/MonthlyReport';
 import { stringify } from 'csv-stringify/sync';
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, // upgrade later with STARTTLS
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_APP_PASSWORD,
   },
-});
+} as any);
 
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
