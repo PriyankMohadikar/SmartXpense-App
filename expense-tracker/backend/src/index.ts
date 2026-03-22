@@ -2,7 +2,9 @@ import 'express-async-errors';
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import dns from 'node:dns';
 
+dns.setDefaultResultOrder('ipv4first');
 dotenv.config();
 
 import authRoutes from './routes/auth';
