@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Category {
+  Food
+  Transport
+  Shopping
+  Bills
+  Health
+  Entertainment
+  Other
+}
+
+enum PaymentMethod {
+  Cash
+  UPI
+  Card
+  Net_Banking
+}
+
+model User {
+  id             String    @id @default(uuid())
+  name           String
+  email          String    @unique
+  password       String
+  avatar_url     String?
+  currency       String    @default("INR")
+  monthly_income Decimal?  @db.Decimal(10, 2)
+  created_at     DateTime  @default(now())
+
+  expenses      Expense[]
+  budgets       Budget[]
+  savings_goals SavingsGoal[]
+
+  @@map("users")
+}
+
+model Expense {
+  id             String        @id @default(uuid())
+  user_id        String
+  amount         Decimal       @db.Decimal(10, 2)
+  category       Category
+  payment_method PaymentMethod
+  description    String?
+  merchant       String?
+  receipt_url    String?
+  is_recurring   Boolean       @default(false)
+  expense_date   DateTime
+  created_at     DateTime      @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([expense_date])
+  @@index([category])
+  @@map("expenses")
+}
+
+model Budget {
+  id           String   @id @default(uuid())
+  user_id      String
+  category     Category
+  limit_amount Decimal  @db.Decimal(10, 2)
+  month        Int
+  year         Int
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, category, month, year])
+  @@map("budgets")
+}
+
+model SavingsGoal {
+  id            String   @id @default(uuid())
+  user_id       String
+  title         String
+  target_amount Decimal  @db.Decimal(10, 2)
+  saved_amount  Decimal  @db.Decimal(10, 2) @default(0)
+  target_date   DateTime
+  created_at    DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("savings_goals")
+}
